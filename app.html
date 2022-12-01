@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>
+        To Do App
+    </h2>
+    <input id="input" type="text" value="" placeholder="Enter a task here">
+    <input id="save" type="button" value="Save" onclick="save()">
+    <div id="edit"></div>
+    <div class="container" style="margin-top: 20px">
+        <h2>DANH SACH SINH VIEN</h2>
+        <table cellpadding="4" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Todo item</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="result" cellpadding="4" style="width: 100%;">
+            </tbody>
+        </table>
+    </div>
+</body>
+<script>
+ let inputText = document.getElementById('input');
+let todoList =[];
+const loadData = () =>{
+todoList = JSON.parse(localStorage.getItem('todo-list'));
+let List = document.querySelector('#result');
+   var html = todoList.map(function(item,index)
+       { 
+        return`
+        <tr>
+                    <td>${index+1}</td>
+                    <td>${item.content}</td>
+                    <td>${item.done}</td>
+                    <td>
+            <input type="button" value="edit" onClick=edit(${index})>
+            <input type="button" value="delete" onClick=deletes(${index})>
+            <input type="button" value="Finish" onClick=finish(${index})></td>
+                </tr>
+        `
+    }
+            
+    )
+    List.innerHTML = html.join('')
+}
+loadData();
+const save = () =>{
+    todoList.push({content: inputText.value, done:false});//them data moi vao list
+    console.log(todoList);
+    localStorage.setItem('todo-list', JSON.stringify(todoList));
+    show();
+    
+}
+
+
+const show = () => {
+let List = document.querySelector('#result');
+   var html = todoList.map(function(item,index)
+       { 
+        return`
+        <tr>
+                    <td>${index+1}</td>
+                    <td>${item.content}</td>
+                    <td>${item.done}</td>
+                    <td>
+            <input type="button" value="edit" onClick=edit(${index})>
+            <input type="button" value="delete" onClick=deletes(${index})>
+            <input type="button" value="Finish" onClick=finish(${index})>
+            </td>
+                </tr>
+        `
+    }
+            
+    )
+    List.innerHTML = html.join('')
+}
+let i =null;
+const edit=(index)=>{
+    i=index;
+    let editBox = document.querySelector('#edit');
+   var html = `<input id="edittext" type="text" value="" placeholder="Enter a task here"><input id="save" type="button" value="Submit" onclick="submit()">`;
+    editBox.innerHTML = html;
+    document.getElementById('edittext').value = todoList[index].content;
+}
+const submit = ()=>{
+    var input = document.getElementById('edittext');
+    todoList[i].content = input.value;
+    localStorage.setItem('todo-list', JSON.stringify(todoList));
+    show();
+}
+const deletes = (index) =>{
+    todoList.splice(index,1);
+    localStorage.setItem('todo-list', JSON.stringify(todoList));
+    show();
+}
+const finish = (index) =>{
+    todoList[index].done =!todoList[index].done;
+    todoList.sort(function(a, b){return a.done - b.done});
+    localStorage.setItem('todo-list', JSON.stringify(todoList));
+    show();
+}
+</script>
+</html>
